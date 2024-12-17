@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "Fwf Staff App",
+    "slug": "fwf-staff-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/appicon2.png",
+    "scheme": "fwf-staff-app",
+    "updates": {
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD", 
+      "fallbackToCacheTimeout": 0          
+    },
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "backgroundColor": "#ffffff"
+    
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.fwf.staff"
+    },
+    "android": {
+      "package": "com.fwf.staff"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.ico"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }],
+       [ "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "recordAudioAndroid": true
+        }],
+    
+        "./translucent-default-splash-screen-config"
+      ]
+    ,
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
