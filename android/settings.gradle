@@ -44,7 +44,7 @@ if (getRNMinorVersion() >= 75) {
   }
 }
 
-rootProject.name = 'Fwf Staff App'
+rootProject.name = 'Fwf Staff'
 
 dependencyResolutionManagement {
   versionCatalogs {

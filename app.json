@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Fwf Staff App",
+    "name": "Fwf Staff",
     "slug": "fwf-staff-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,13 +8,12 @@
     "scheme": "fwf-staff-app",
     "updates": {
       "enabled": true,
-      "checkAutomatically": "ON_LOAD", 
-      "fallbackToCacheTimeout": 0          
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0
     },
     "userInterfaceStyle": "automatic",
     "splash": {
       "backgroundColor": "#ffffff"
-    
     },
     "ios": {
       "supportsTablet": true,
@@ -34,19 +33,31 @@
         "expo-location",
         {
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
-        }],
-       [ "expo-camera",
+        }
+      ],
+      [
+        "expo-camera",
         {
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
           "recordAudioAndroid": true
-        }],
-    
-        "./translucent-default-splash-screen-config"
-      ]
-    ,
+        }
+      ],
+      [
+        "onesignal-expo-plugin",
+        {
+          "mode": "development"
+        }
+      ],
+      "./translucent-default-splash-screen-config"
+     
+    ],
+
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+        "oneSignalAppId": "a9450ef5-51f5-42d2-94cf-b83d29142f38"
+      }
   }
 }

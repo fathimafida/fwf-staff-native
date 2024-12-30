@@ -26,7 +26,7 @@ import { SplashScreen, useNavigation } from "expo-router";
 
 
 OneSignal.Debug.setLogLevel(LogLevel.Verbose);
-OneSignal.initialize("b72808d3-3d77-4fd6-9964-6d361d854e15");
+OneSignal.initialize("a9450ef5-51f5-42d2-94cf-b83d29142f38");
 
 // Also need enable notifications to complete OneSignal setup
 OneSignal.Notifications.requestPermission(true);
@@ -35,7 +35,7 @@ SplashScreen.preventAutoHideAsync();
 
 const isLocal = true;
 const baseUrl = isLocal
-  ? "http://192.168.31.176:5188/"
+  ? "http://192.168.29.35:5173/"
   : "https://fitwithfasna.howincloud.com";
 
 export default function App() {
