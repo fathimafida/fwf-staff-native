@@ -6,30 +6,26 @@ import React, {
   useCallback,
   useEffect,
   useRef,
+
 } from "react";
 import {
-  ToastAndroid,
+
   Linking,
   Platform,
   Keyboard,
-  View,
-  Text,
-  Button,
-  TouchableOpacity,
+
 } from "react-native";
 import * as Location from "expo-location";
-import * as ImagePicker from "expo-image-picker";
+
 import { handleHapticFeedback } from "@/utils/haptics-utils";
-import SpInAppUpdates, {
-  IAUUpdateKind,
-  StartUpdateOptions,
-  IAUInstallStatus,
-} from "sp-react-native-in-app-updates";
-import { Camera, CameraType, CameraView, useCameraPermissions } from "expo-camera";
+
+import { useCameraPermissions } from "expo-camera";
 import { OneSignal } from "react-native-onesignal";
+import WebView from "react-native-webview";
 
 type MessageHandlerContextType = {
   handleMessage: (event: { nativeEvent: { data: string } }) => void;
+  webViewRef: React.RefObject<WebView>;
 };
 
 const MessageHandlerContext = createContext<
@@ -43,6 +39,7 @@ export const MessageHandlerProvider: React.FC<{
     null
   );
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const webViewRef = useRef<WebView>(null);
 
   async function getCurrentLocation() {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -51,52 +48,19 @@ export const MessageHandlerProvider: React.FC<{
       return;
     }
     let location = await Location.getCurrentPositionAsync({});
+
     setLocation(location);
+    const message = JSON.stringify({ type: 'SET_LOCATION', payload: location.coords });
+    webViewRef.current?.postMessage(message);
+
   }
+const [permission, requestPermission] = useCameraPermissions();
 
-  const [facing, setFacing] = useState<CameraType>("back");
-  const [permission, requestPermission] = useCameraPermissions();
- const [focusing,setFocusing] = useState(false)
-  const [showCamera, setShowCamera] = useState(false);
-  const [resourcePath, setResourcePath] = useState([]);
-  const openCamera = async () => {
-    try {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      if (status !== "granted") {
-        console.warn("Camera permission not granted.");
-        return;
-      }
-  
-      const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-      });
-  
-      
-      setShowCamera(true);
-  
-    } catch (error) {
-      console.error("Camera Error: ", error);
-    }
-  };
-  
-  const cameraRef = useRef<CameraView>(null);
+  useEffect(() => {
+    requestPermission();
+  },[])
+ 
 
-  const takePicture = async () => {
-    if (cameraRef.current) {
-      try {
-        const photo = await cameraRef.current.takePictureAsync({
-          quality: 0.5,
-          base64: true,
-        });
-        // console.log(photo.uri); // Log the URI or use it elsewhere
-      } catch (error) {
-        console.error("Failed to capture photo:", error);
-      }
-    }
-  };
 
   const openAppScheme = async (url: string) => {
     try {
@@ -125,34 +89,9 @@ export const MessageHandlerProvider: React.FC<{
     }
   };
 
-  const checkForUpdate = async (): Promise<void> => {
-    const inAppUpdates = new SpInAppUpdates(true);
 
-    try {
-      const result = await inAppUpdates.checkNeedsUpdate();
-      if (result.shouldUpdate) {
-        const updateOptions: StartUpdateOptions = {
-          updateType: IAUUpdateKind.IMMEDIATE,
-        };
 
-        inAppUpdates.addStatusUpdateListener((status) => {
-          if (status.status === IAUInstallStatus.DOWNLOADED) {
-            inAppUpdates.installUpdate();
-          }
-        });
-
-        await inAppUpdates.startUpdate(updateOptions);
-      }
-    } catch (error) {
-      console.error("Error checking for updates:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (Platform.OS === "android") {
-      checkForUpdate();
-    }
-  }, []);
+ 
 
   useEffect(() => {
     getCurrentLocation();
@@ -169,9 +108,9 @@ export const MessageHandlerProvider: React.FC<{
         case "console_log":
           console.log(message.data);
           break;
-        case "alert":
-          alert(message.data);
-          break;
+        // case "alert":
+        //   alert(message.data);
+        //   break;
         case "keyboard_unfocus":
           Keyboard.dismiss();
           console.log("Keyboard dismissed");
@@ -189,10 +128,6 @@ export const MessageHandlerProvider: React.FC<{
         case "request_camera_permission":
           requestPermission();
           break;
-        case "open_camera":
-          openCamera();
-          break;
-
         case "onesignal_login":
           OneSignal.login(message.data);
           break;
@@ -213,42 +148,8 @@ export const MessageHandlerProvider: React.FC<{
   );
 
   return (
-    <MessageHandlerContext.Provider value={{ handleMessage }}>
-      {/* Camera View */}
-      {/* {showCamera && (
-  <View style={{ flex: 1 }}>
-    <CameraView
-      ref={cameraRef}
-      style={{ width: "100%", height: "100%" }}
-      facing={facing}
-      
-      onTouchStart={() => setFocusing(true)}
-      onTouchEnd={() => setFocusing(false)}
-    >
-    </CameraView>
+    <MessageHandlerContext.Provider value={{ handleMessage ,webViewRef}}>
 
-
-    <TouchableOpacity
-      onPress={() => setFacing((prev) => (prev === "back" ? "front" : "back"))}
-      style={{
-        position: 'absolute',
-        bottom: 40,
-        right: 20,
-        backgroundColor: 'white',
-        padding: 15,
-        borderRadius: 30,
-        elevation: 10,
-      }}
-    >
-      <Text>🔄</Text>
-    </TouchableOpacity>
-
-  </View>
-
-
-      )} */}
-
-      {/* Render children */}
       {children}
     </MessageHandlerContext.Provider>
   );

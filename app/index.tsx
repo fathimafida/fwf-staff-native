@@ -35,18 +35,18 @@ SplashScreen.preventAutoHideAsync();
 
 const isLocal = true;
 const baseUrl = isLocal
-  ? " http://192.168.31.176:5180/"
+  ? "http://192.168.31.176:5188/"
   : "https://fitwithfasna.howincloud.com";
 
 export default function App() {
   const [loading, setLoading] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [currentUrl, setCurrentUrl] = useState(baseUrl);
-  const webViewRef = useRef<WebView>(null);
+ 
   const [canGoBack, setCanGoBack] = useState(false);
   const [lastBackPressedTime, setLastBackPressedTime] = useState(0);
   const [isConnected, setIsConnected] = useState(true);
-  const { handleMessage } = useMessageHandler();
+  const { handleMessage ,webViewRef} = useMessageHandler();
   const navigation = useNavigation();
   const backPressCallback = useCallback(
     () =>
